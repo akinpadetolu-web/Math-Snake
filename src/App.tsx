@@ -262,6 +262,7 @@ export default function App() {
   const [leaderboardLoading, setLeaderboardLoading] = useState<boolean>(false);
 
   const lastLoggedInUserId = useRef<string | null>(null);
+  const registeringNameRef = useRef<string | null>(null);
 
   // Auth synchronization listener
   useEffect(() => {
@@ -273,37 +274,40 @@ export default function App() {
         lastLoggedInUserId.current = user.uid;
         try {
           const profile = await fetchPlayerProfile(user.uid);
-          if (profile) {
-            setHighScores((prev) => {
-              const merged = {
-                EASY: Math.max(prev.EASY, profile.highScoreEasy || 0),
-                MODERATE: Math.max(prev.MODERATE, profile.highScoreModerate || 0),
-                HARD: Math.max(prev.HARD, profile.highScoreHard || 0),
-              };
-              
-              localStorage.setItem('MathSnake_HighScore_EASY', merged.EASY.toString());
-              localStorage.setItem('MathSnake_HighScore_MODERATE', merged.MODERATE.toString());
-              localStorage.setItem('MathSnake_HighScore_HARD', merged.HARD.toString());
+          
+          const localEasy = parseInt(localStorage.getItem('MathSnake_HighScore_EASY') || '0', 10);
+          const localModerate = parseInt(localStorage.getItem('MathSnake_HighScore_MODERATE') || '0', 10);
+          const localHard = parseInt(localStorage.getItem('MathSnake_HighScore_HARD') || '0', 10);
+          const localScores = { EASY: localEasy, MODERATE: localModerate, HARD: localHard };
 
-              // Write back merged score
-              syncPlayerProfile(user.uid, user.displayName || profile.displayName, merged).catch(console.error);
-              return merged;
-            });
+          if (profile) {
+            const merged = {
+              EASY: Math.max(localEasy, profile.highScoreEasy || 0),
+              MODERATE: Math.max(localModerate, profile.highScoreModerate || 0),
+              HARD: Math.max(localHard, profile.highScoreHard || 0),
+            };
+            
+            localStorage.setItem('MathSnake_HighScore_EASY', merged.EASY.toString());
+            localStorage.setItem('MathSnake_HighScore_MODERATE', merged.MODERATE.toString());
+            localStorage.setItem('MathSnake_HighScore_HARD', merged.HARD.toString());
+            
+            setHighScores(merged);
+            
+            // Sync current profile back to Firestore asynchronously
+            const finalName = user.displayName || profile.displayName || registeringNameRef.current || `Player_${user.uid.substring(0, 5)}`;
+            await syncPlayerProfile(user.uid, finalName, merged);
           } else {
-            setHighScores((currentScores) => {
-              syncPlayerProfile(
-                user.uid, 
-                user.displayName || `Player_${user.uid.substring(0, 5)}`, 
-                currentScores
-              ).catch(console.error);
-              return currentScores;
-            });
+            const chosenName = registeringNameRef.current || user.displayName || `Player_${user.uid.substring(0, 5)}`;
+            setHighScores(localScores);
+            await syncPlayerProfile(user.uid, chosenName, localScores);
           }
+          registeringNameRef.current = null;
         } catch (err) {
           console.error("Failed to sync profile on state change:", err);
         }
       } else if (!user) {
         lastLoggedInUserId.current = null;
+        registeringNameRef.current = null;
       }
     });
     return () => unsubscribe();
@@ -346,6 +350,7 @@ export default function App() {
         if (authDisplayName.length < 2 || authDisplayName.length > 20) {
           throw new Error("Display Name must be 2-20 characters.");
         }
+        registeringNameRef.current = authDisplayName;
         const res = await createUserWithEmailAndPassword(auth, authEmail, authPassword);
         await updateProfile(res.user, { displayName: authDisplayName });
         await syncPlayerProfile(res.user.uid, authDisplayName, highScores);
