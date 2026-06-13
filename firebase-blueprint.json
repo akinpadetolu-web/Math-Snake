@@ -1,0 +1,26 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User profile with their high scores on different difficulty levels.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Authenticated UID of the player" },
+        "displayName": { "type": "string", "description": "The custom display name chosen by the player" },
+        "email": { "type": "string", "description": "The user email" },
+        "highScoreEasy": { "type": "integer", "description": "Easy mode high score" },
+        "highScoreModerate": { "type": "integer", "description": "Moderate mode high score" },
+        "highScoreHard": { "type": "integer", "description": "Hard mode high score" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when player created their account" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp of the last high score or name update" }
+      },
+      "required": ["userId", "displayName", "email", "highScoreEasy", "highScoreModerate", "highScoreHard", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Secure record of player score registry."
+    }
+  }
+}

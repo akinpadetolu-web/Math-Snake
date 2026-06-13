@@ -1,0 +1,50 @@
+<svg xmlns="http://www.svg3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Background base dark plate -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="#020617" />
+  
+  <!-- Subtle cyber grid lines for retro theme -->
+  <path d="M 64,0 L 64,512 M 128,0 L 128,512 M 192,0 L 192,512 M 256,0 L 256,512 M 320,0 L 320,512 M 384,0 L 384,512 M 448,0 L 448,512" stroke="#1e293b" stroke-width="2" opacity="0.3" />
+  <path d="M 0,64 L 512,64 M 0,128 L 512,128 M 0,192 L 512,192 M 0,256 L 512,256 M 0,320 L 512,320 M 0,384 L 512,384 M 0,448 L 512,448" stroke="#1e293b" stroke-width="2" opacity="0.3" />
+
+  <!-- Inner border neon glow -->
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="none" stroke="#10b981" stroke-width="8" opacity="0.8" />
+  
+  <!-- Snake body path: Glowing emerald segments folding -->
+  <g filter="drop-shadow(0px 0px 15px rgba(16, 185, 129, 0.6))">
+    <!-- Body Segment 1 (Tail) -->
+    <rect x="96" y="320" width="64" height="64" rx="12" fill="#047857" />
+    <!-- Segment 2 -->
+    <rect x="160" y="320" width="64" height="64" rx="12" fill="#059669" />
+    <!-- Segment 3 -->
+    <rect x="160" y="256" width="64" height="64" rx="12" fill="#10b981" />
+    <!-- Segment 4 -->
+    <rect x="224" y="256" width="64" height="64" rx="12" fill="#34d399" />
+    <!-- Segment 5 -->
+    <rect x="288" y="256" width="64" height="64" rx="12" fill="#10b981" />
+    <!-- Segment 6 (Pre-head) -->
+    <rect x="288" y="192" width="64" height="64" rx="12" fill="#059669" />
+    <!-- Snake Head -->
+    <rect x="352" y="192" width="72" height="72" rx="16" fill="#10b981" stroke="#34d399" stroke-width="4" />
+    
+    <!-- Snake Eyes -->
+    <circle cx="380" cy="216" r="6" fill="#020617" />
+    <circle cx="400" cy="216" r="6" fill="#020617" />
+    
+    <!-- Tongue -->
+    <path d="M 424,228 L 436,228 L 442,224 M 436,228 L 442,232" fill="none" stroke="#ef4444" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <!-- Number choice target (Golden math orb) -->
+  <g filter="drop-shadow(0px 0px 18px rgba(245, 158, 11, 0.7))">
+    <circle cx="256" cy="128" r="44" fill="#f59e0b" />
+    <!-- Outer gold accent ring -->
+    <circle cx="256" cy="128" r="50" fill="none" stroke="#fbbf24" stroke-width="4" />
+    <!-- Number symbol '+' -->
+    <text x="256" y="142" font-family="'Courier New', monospace, sans-serif" font-size="48" font-weight="900" fill="#020617" text-anchor="middle">+</text>
+  </g>
+
+  <!-- Text: Logo/App Signature "MATH" & "SNAKE" -->
+  <text x="256" y="440" font-family="'Courier New', monospace, sans-serif" font-size="34" font-weight="900" fill="#f8fafc" letter-spacing="4" text-anchor="middle">
+    MATH<tspan fill="#10b981">SNAKE</tspan>
+  </text>
+</svg>

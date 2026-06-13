@@ -1,0 +1,78 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global safety net default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidUser(data) {
+      return data.userId is string 
+        && data.userId == request.auth.uid
+        && data.displayName is string 
+        && data.displayName.size() >= 2 
+        && data.displayName.size() <= 20
+        && data.highScoreEasy is int 
+        && data.highScoreEasy >= 0 
+        && data.highScoreEasy <= 100000
+        && data.highScoreModerate is int 
+        && data.highScoreModerate >= 0 
+        && data.highScoreModerate <= 100000
+        && data.highScoreHard is int 
+        && data.highScoreHard >= 0 
+        && data.highScoreHard <= 100000;
+    }
+
+    match /test/{docId} {
+      allow get: if true;
+    }
+
+    match /users/{userId} {
+      allow get: if isValidId(userId);
+      allow list: if true; // Safe query since there is zero PII. Only public display name and achievements.
+      
+      allow create: if isOwner(userId) 
+        && isValidId(userId)
+        && isValidUser(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && incoming().keys().hasAll(['userId', 'displayName', 'highScoreEasy', 'highScoreModerate', 'highScoreHard', 'createdAt', 'updatedAt'])
+        && incoming().keys().size() == 7;
+
+      allow update: if isOwner(userId)
+        && isValidId(userId)
+        && isValidUser(incoming())
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          // Action: Update Name
+          (incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'updatedAt'])) ||
+          // Action: Update Score
+          (incoming().diff(existing()).affectedKeys().hasAny(['highScoreEasy', 'highScoreModerate', 'highScoreHard', 'updatedAt']))
+        );
+        
+      allow delete: if false; // High score profiles are non-deletable to ensure leaderboard persistence
+    }
+  }
+}

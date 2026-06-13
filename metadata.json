@@ -1,0 +1,6 @@
+{
+  "name": "Math Snake",
+  "description": "A retro-inspired 2D retro arithmetic snake game with Nokia phone aesthetic and math-progression stages.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
