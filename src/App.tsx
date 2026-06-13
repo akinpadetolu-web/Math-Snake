@@ -368,6 +368,9 @@ export default function App() {
       if (err.code === "auth/wrong-password") msg = "Incorrect password.";
       if (err.code === "auth/email-already-in-use") msg = "Email address already matches an active account.";
       if (err.code === "auth/weak-password") msg = "Password must be at least 6 characters.";
+      if (err.code === "auth/unauthorized-domain") {
+        msg = `Domain '${window.location.hostname}' is unauthorized. Access Firebase Console -> Authentication -> Settings -> Authorized Domains and add it.`;
+      }
       setAuthError(msg);
     } finally {
       setAuthSubmitting(false);
@@ -382,7 +385,11 @@ export default function App() {
       await syncPlayerProfile(res.user.uid, res.user.displayName || `Player_${res.user.uid.substring(0, 5)}`, highScores);
     } catch (err: any) {
       console.error(err);
-      setAuthError(err.message || "Google Sign-In failed.");
+      let msg = err.message || "Google Sign-In failed.";
+      if (err.code === "auth/unauthorized-domain") {
+        msg = `Domain '${window.location.hostname}' is unauthorized. Access Firebase Console -> Authentication -> Settings -> Authorized Domains and add it.`;
+      }
+      setAuthError(msg);
     } finally {
       setAuthSubmitting(false);
     }
@@ -1455,7 +1462,7 @@ export default function App() {
                         </div>
 
                         {authError && (
-                          <p className="text-[8.5px] text-rose-400 leading-none truncate">{authError}</p>
+                          <p className="text-[9px] text-rose-400 leading-normal break-words whitespace-pre-wrap">{authError}</p>
                         )}
 
                         <div className="flex gap-1 mt-0.5">
