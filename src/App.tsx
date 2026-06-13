@@ -231,6 +231,7 @@ export default function App() {
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState<boolean>(false);
   const [showSettingsPage, setShowSettingsPage] = useState<boolean>(false);
   const [showLeaderboardPage, setShowLeaderboardPage] = useState<boolean>(false);
+  const [hasSavedGame, setHasSavedGame] = useState<boolean>(false);
   
   const [paletteId, setPaletteId] = useState<string>(() => {
     try {
@@ -603,7 +604,77 @@ export default function App() {
     setGameStatus('STAGE_INTRO');
   }, [playRetroSound, spawnFoods, difficulty]);
 
+  // Read saved game presence
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('MathSnake_SavedGame');
+      setHasSavedGame(!!saved);
+    } catch {
+      setHasSavedGame(false);
+    }
+  }, [gameStatus]);
+
+  // Auto-save active gameplay states
+  useEffect(() => {
+    if (['PLAYING', 'PAUSED', 'STAGE_INTRO'].includes(gameStatus)) {
+      try {
+        const activeState = {
+          snake,
+          score,
+          stageId,
+          difficulty,
+          lives,
+          stageCorrectCount,
+          equation,
+          foods,
+          obstacles,
+          direction,
+          nextDirection
+        };
+        localStorage.setItem('MathSnake_SavedGame', JSON.stringify(activeState));
+      } catch (err) {
+        console.error('Failed to auto-save game progress:', err);
+      }
+    } else if (gameStatus === 'GAMEOVER' || gameStatus === 'VICTORY') {
+      try {
+        localStorage.removeItem('MathSnake_SavedGame');
+      } catch (err) {
+        console.error('Failed to clear saved stage progress:', err);
+      }
+    }
+  }, [gameStatus, snake, score, stageId, difficulty, lives, stageCorrectCount, equation, foods, obstacles, direction, nextDirection]);
+
+  const handleResumeGame = () => {
+    try {
+      const savedStr = localStorage.getItem('MathSnake_SavedGame');
+      if (!savedStr) return;
+      const saved = JSON.parse(savedStr);
+      if (saved) {
+        setSnake(saved.snake);
+        setScore(saved.score);
+        setStageId(saved.stageId);
+        setDifficulty(saved.difficulty);
+        setLives(saved.lives);
+        setStageCorrectCount(saved.stageCorrectCount);
+        setEquation(saved.equation);
+        setFoods(saved.foods);
+        setObstacles(saved.obstacles);
+        setDirection(saved.direction);
+        setNextDirection(saved.nextDirection);
+        // Start paused so the user has a moment to orient before action ticks continue
+        setGameStatus('PAUSED');
+        setLastActionMsg('GAME RESUMED! TAP PLAY TO CONTINUE');
+        playRetroSound('click');
+      }
+    } catch (err) {
+      console.error('Failed to resume stage save state:', err);
+    }
+  };
+
   const handleStartGame = useCallback((initialStage: number = 1) => {
+    try {
+      localStorage.removeItem('MathSnake_SavedGame');
+    } catch {}
     startStage(initialStage, true);
   }, [startStage]);
 
@@ -1270,6 +1341,25 @@ export default function App() {
                   </button>
 
                 </div>
+
+                {hasSavedGame && (
+                  <button 
+                    type="button"
+                    onClick={handleResumeGame}
+                    className="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl uppercase tracking-wider transition-all shadow-xl active:scale-95 duration-150 flex items-center justify-center gap-2 cursor-pointer border border-amber-400/30 shadow-[0_4px_20px_rgba(245,158,11,0.3)]"
+                    id="start-overlay-resume-btn"
+                  >
+                    <Sparkles className="w-4 h-4 text-slate-950 shrink-0" />
+                    RESUME GAME (Lvl {(() => {
+                      try {
+                        const saved = localStorage.getItem('MathSnake_SavedGame');
+                        return saved ? JSON.parse(saved).stageId : 1;
+                      } catch {
+                        return 1;
+                      }
+                    })()})
+                  </button>
+                )}
 
                 {/* Row 2: Centers "start game." precisely matching the sketch */}
                 <button 
