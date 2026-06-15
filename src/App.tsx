@@ -825,13 +825,30 @@ export default function App() {
             setCorrectFlash(true);
             setTimeout(() => setCorrectFlash(false), 250);
 
-            const pointsEarned = currentStageConfig.pointsScale * prevSnake.length;
+            const nextCorrectCount = stageCorrectCount + 1;
+            setStageCorrectCount(nextCorrectCount);
+
+            let multiplier = 1;
+            if (nextCorrectCount >= 3) {
+              if (difficulty === 'EASY') {
+                multiplier = 2;
+              } else if (difficulty === 'MODERATE') {
+                multiplier = 3;
+              } else if (difficulty === 'HARD') {
+                multiplier = 4;
+              }
+            }
+
+            const basePoints = currentStageConfig.pointsScale * prevSnake.length;
+            const pointsEarned = basePoints * multiplier;
             const updatedScore = score + pointsEarned;
             setScore(updatedScore);
 
-            const nextCorrectCount = stageCorrectCount + 1;
-            setStageCorrectCount(nextCorrectCount);
-            setLastActionMsg(`CORRECT SOLUTIONS: ${nextCorrectCount}`);
+            if (multiplier > 1) {
+              setLastActionMsg(`CORRECT SOLUTIONS: ${nextCorrectCount} (${multiplier}X MULTIPLIER!)`);
+            } else {
+              setLastActionMsg(`CORRECT SOLUTIONS: ${nextCorrectCount}`);
+            }
 
             // Level Clear and advance logic
             if (nextCorrectCount >= currentStageConfig.targetToWin) {
