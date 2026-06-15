@@ -355,6 +355,11 @@ export default function App() {
         const res = await createUserWithEmailAndPassword(auth, authEmail, authPassword);
         await updateProfile(res.user, { displayName: authDisplayName });
         await syncPlayerProfile(res.user.uid, authDisplayName, highScores);
+        // Force React auth state update to capture the newly set display name immediately description
+        if (auth.currentUser) {
+          setCurrentUser({ ...auth.currentUser });
+        }
+        setIsRegistering(false);
       } else {
         await signInWithEmailAndPassword(auth, authEmail, authPassword);
       }
