@@ -1027,172 +1027,178 @@ export default function App() {
         {/* ==========================================================
             HUD (Heads-Up Display)
            ========================================================== */}
-        <div className="absolute top-0 left-0 right-0 ios-safe-hud bg-slate-950/90 border-b border-slate-900 z-30 px-5 flex items-center justify-between shadow-lg">
-          {/* Back Arrow button + Active Math Formula block */}
-          <div className="flex items-center gap-3">
-            {gameStatus !== 'START' && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  playRetroSound('click');
-                  setGameStatus('START');
-                }}
-                className="p-2 rounded-lg border border-slate-800 bg-slate-900 text-slate-400 hover:text-slate-100 hover:border-slate-700 transition cursor-pointer flex items-center justify-center shadow-sm"
-                title="Back to Game Main Page"
-                id="hud-back-arrow-btn"
-              >
-                <ArrowLeft className="w-4 h-4" />
-              </button>
-            )}
-            <div className="flex flex-col">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Solve</span>
-              <span 
-                className="text-lg font-bold font-mono tracking-wide"
-                style={{ color: activeTheme.primary }}
-              >
-                {(gameStatus === 'PLAYING' || gameStatus === 'PAUSED') && equation ? equation.text : '...'}
-              </span>
-            </div>
-          </div>
-
-          {/* Core Level and score analytics block */}
-          <div className="flex items-center gap-4">
-            
-            {/* Lives */}
-            <div className="flex items-center gap-1 bg-slate-900/60 px-2.5 py-1 rounded-lg border border-slate-800">
-              {[...Array(3)].map((_, i) => (
-                <span 
-                  key={i} 
-                  className={`text-xs transition-opacity duration-300 ${i < lives ? 'text-red-500 opacity-100' : 'text-slate-800 opacity-20'}`}
-                >
-                  ❤️
-                </span>
-              ))}
-            </div>
-
-            {/* Score block */}
-            <div className="text-right">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Score</span>
-              <div className="flex items-center gap-1.5 justify-end">
-                <span className="text-sm font-bold font-mono text-slate-100">{score}</span>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">
-                  Lvl {stageId}
-                </span>
-              </div>
-            </div>
-
-            {/* Controls */}
-            {(gameStatus === 'PLAYING' || gameStatus === 'PAUSED') && (
-              <div className="flex items-center gap-1.5 pl-2 border-l border-slate-900">
+        {gameStatus !== 'START' && (
+          <div className="absolute top-0 left-0 right-0 ios-safe-hud bg-slate-950/90 border-b border-slate-900 z-30 px-5 flex items-center justify-between shadow-lg">
+            {/* Back Arrow button + Active Math Formula block */}
+            <div className="flex items-center gap-3">
+              {gameStatus !== 'START' && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     playRetroSound('click');
-                    if (gameStatus === 'PLAYING') {
-                      setGameStatus('PAUSED');
-                      setLastActionMsg('GAME PAUSED');
-                    } else {
-                      setGameStatus('PLAYING');
-                      setLastActionMsg('RESUMED CONTROLS');
-                    }
+                    setGameStatus('START');
                   }}
-                  className={`p-1.5 rounded-lg border bg-slate-900 border-slate-800 hover:text-white transition ${gameStatus === 'PAUSED' ? 'text-amber-400 animate-pulse' : 'text-slate-400'}`}
-                  title={gameStatus === 'PLAYING' ? 'Pause' : 'Resume'}
-                  id="hud-pause-btn"
+                  className="p-2 rounded-lg border border-slate-800 bg-slate-900 text-slate-400 hover:text-slate-100 hover:border-slate-700 transition cursor-pointer flex items-center justify-center shadow-sm"
+                  title="Back to Game Main Page"
+                  id="hud-back-arrow-btn"
                 >
-                  {gameStatus === 'PAUSED' ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
+                  <ArrowLeft className="w-4 h-4" />
                 </button>
+              )}
+              <div className="flex flex-col">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Solve</span>
+                <span 
+                  className="text-lg font-bold font-mono tracking-wide"
+                  style={{ color: activeTheme.primary }}
+                >
+                  {(gameStatus === 'PLAYING' || gameStatus === 'PAUSED') && equation ? equation.text : '...'}
+                </span>
               </div>
-            )}
+            </div>
+
+            {/* Core Level and score analytics block */}
+            <div className="flex items-center gap-4">
+              
+              {/* Lives */}
+              <div className="flex items-center gap-1 bg-slate-900/60 px-2.5 py-1 rounded-lg border border-slate-800">
+                {[...Array(3)].map((_, i) => (
+                  <span 
+                    key={i} 
+                    className={`text-xs transition-opacity duration-300 ${i < lives ? 'text-red-500 opacity-100' : 'text-slate-800 opacity-20'}`}
+                  >
+                    ❤️
+                  </span>
+                ))}
+              </div>
+
+              {/* Score block */}
+              <div className="text-right">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-0.5">Score</span>
+                <div className="flex items-center gap-1.5 justify-end">
+                  <span className="text-sm font-bold font-mono text-slate-100">{score}</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">
+                    Lvl {stageId}
+                  </span>
+                </div>
+              </div>
+
+              {/* Controls */}
+              {(gameStatus === 'PLAYING' || gameStatus === 'PAUSED') && (
+                <div className="flex items-center gap-1.5 pl-2 border-l border-slate-900">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playRetroSound('click');
+                      if (gameStatus === 'PLAYING') {
+                        setGameStatus('PAUSED');
+                        setLastActionMsg('GAME PAUSED');
+                      } else {
+                        setGameStatus('PLAYING');
+                        setLastActionMsg('RESUMED CONTROLS');
+                      }
+                    }}
+                    className={`p-1.5 rounded-lg border bg-slate-900 border-slate-800 hover:text-white transition ${gameStatus === 'PAUSED' ? 'text-amber-400 animate-pulse' : 'text-slate-400'}`}
+                    title={gameStatus === 'PLAYING' ? 'Pause' : 'Resume'}
+                    id="hud-pause-btn"
+                  >
+                    {gameStatus === 'PAUSED' ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* ==========================================================
             GAME PLAYFIELD ARENA
            ========================================================== */}
-        <div className={`absolute inset-x-0 ${arenaBottomClass} ios-safe-arena z-10 grid grid-cols-16 grid-rows-16 ${activeTheme.arenaBg} p-[8px] transition-colors duration-300`}>
-          {[...Array(GRID_SIZE * GRID_SIZE)].map((_, idx) => {
-            const x = idx % GRID_SIZE;
-            const y = Math.floor(idx / GRID_SIZE);
+        {gameStatus !== 'START' && (
+          <div className={`absolute inset-x-0 ${arenaBottomClass} ios-safe-arena z-10 grid grid-cols-16 grid-rows-16 ${activeTheme.arenaBg} p-[8px] transition-colors duration-300`}>
+            {[...Array(GRID_SIZE * GRID_SIZE)].map((_, idx) => {
+              const x = idx % GRID_SIZE;
+              const y = Math.floor(idx / GRID_SIZE);
 
-            const isHead = snake[0] && snake[0].x === x && snake[0].y === y;
-            const isBody = snake.slice(1).some(segment => segment.x === x && segment.y === y);
-            const isObstacle = obstacles.some(obs => obs.x === x && obs.y === y);
+              const isHead = snake[0] && snake[0].x === x && snake[0].y === y;
+              const isBody = snake.slice(1).some(segment => segment.x === x && segment.y === y);
+              const isObstacle = obstacles.some(obs => obs.x === x && obs.y === y);
 
-            const foodIndex = foods.findIndex(f => f.position.x === x && f.position.y === y);
-            const food = foodIndex !== -1 ? foods[foodIndex] : null;
+              const foodIndex = foods.findIndex(f => f.position.x === x && f.position.y === y);
+              const food = foodIndex !== -1 ? foods[foodIndex] : null;
 
-            const foodStyle = food ? getFoodStyle(food, food.isCorrect, difficulty, activeTheme.id, STAGE_THEMES[stageId]?.primary || '#10B981') : null;
+              const foodStyle = food ? getFoodStyle(food, food.isCorrect, difficulty, activeTheme.id, STAGE_THEMES[stageId]?.primary || '#10B981') : null;
 
-            return (
-              <div 
-                key={idx}
-                className="relative aspect-square flex items-center justify-center w-full h-full"
-              >
-                {/* Brick obstacles representation */}
-                {isObstacle && (
-                  <div className={`absolute inset-[2px] ${activeTheme.id === 'CLASSIC_NOKIA' ? 'bg-[#1f2937]/80 border border-[#1f2937]/35' : 'bg-slate-900 border border-slate-700/60'} rounded-sm z-25`} />
-                )}
+              return (
+                <div 
+                  key={idx}
+                  className="relative aspect-square flex items-center justify-center w-full h-full"
+                >
+                  {/* Brick obstacles representation */}
+                  {isObstacle && (
+                    <div className={`absolute inset-[2px] ${activeTheme.id === 'CLASSIC_NOKIA' ? 'bg-[#1f2937]/80 border border-[#1f2937]/35' : 'bg-slate-900 border border-slate-700/60'} rounded-sm z-25`} />
+                  )}
 
-                {/* Snake Head */}
-                {isHead && (
-                  <div 
-                    className="absolute inset-[1px] rounded-md z-20 flex items-center justify-center scale-105"
-                    style={{
-                      backgroundColor: activeTheme.primary,
-                    }}
-                  >
-                    <div className="flex gap-1.5">
-                      <span className={`w-1.5 h-1.5 ${activeTheme.id === 'CLASSIC_NOKIA' ? 'bg-[#9bbc0f]' : 'bg-slate-950'} rounded-full`} />
-                      <span className={`w-1.5 h-1.5 ${activeTheme.id === 'CLASSIC_NOKIA' ? 'bg-[#9bbc0f]' : 'bg-slate-950'} rounded-full`} />
+                  {/* Snake Head */}
+                  {isHead && (
+                    <div 
+                      className="absolute inset-[1px] rounded-md z-20 flex items-center justify-center scale-105"
+                      style={{
+                        backgroundColor: activeTheme.primary,
+                      }}
+                    >
+                      <div className="flex gap-1.5">
+                        <span className={`w-1.5 h-1.5 ${activeTheme.id === 'CLASSIC_NOKIA' ? 'bg-[#9bbc0f]' : 'bg-slate-950'} rounded-full`} />
+                        <span className={`w-1.5 h-1.5 ${activeTheme.id === 'CLASSIC_NOKIA' ? 'bg-[#9bbc0f]' : 'bg-slate-950'} rounded-full`} />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Snake Body Segment */}
-                {isBody && (
-                  <div 
-                    className="absolute inset-[2.5px] rounded-sm z-10 transition-opacity"
-                    style={{
-                      backgroundColor: activeTheme.primary,
-                      opacity: Math.max(0.3, 1.0 - (snake.findIndex(s => s.x === x && s.y === y) / snake.length) * 0.6),
-                    }}
-                  />
-                )}
+                  {/* Snake Body Segment */}
+                  {isBody && (
+                    <div 
+                      className="absolute inset-[2.5px] rounded-sm z-10 transition-opacity"
+                      style={{
+                        backgroundColor: activeTheme.primary,
+                        opacity: Math.max(0.3, 1.0 - (snake.findIndex(s => s.x === x && s.y === y) / snake.length) * 0.6),
+                      }}
+                    />
+                  )}
 
-                {/* Numeric Choices */}
-                {food && foodStyle && (
-                  <div 
-                    className={`absolute inset-[1px] rounded-full z-20 flex items-center justify-center font-mono font-bold shadow-md transition-all ${foodStyle.classes}`}
-                    style={foodStyle.style}
-                  >
-                    <span className="text-xs select-none leading-none">{food.value}</span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                  {/* Numeric Choices */}
+                  {food && foodStyle && (
+                    <div 
+                      className={`absolute inset-[1px] rounded-full z-20 flex items-center justify-center font-mono font-bold shadow-md transition-all ${foodStyle.classes}`}
+                      style={foodStyle.style}
+                    >
+                      <span className="text-xs select-none leading-none">{food.value}</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Particle Explosions Overlay Layer */}
-        <div className={`absolute inset-x-0 ${arenaBottomClass} ios-safe-arena z-20 pointer-events-none overflow-hidden`}>
-          {particles.map((p) => (
-            <div
-              key={p.id}
-              className="absolute rounded-full"
-              style={{
-                left: `${(p.x / GRID_SIZE) * 100}%`,
-                top: `${(p.y / GRID_SIZE) * 100}%`,
-                width: `${p.size}px`,
-                height: `${p.size}px`,
-                backgroundColor: p.color,
-                opacity: p.alpha,
-                transform: 'translate(-50%, -50%)',
-                boxShadow: `0 0 10px ${p.color}, 0 0 4px ${p.color}`,
-              }}
-            />
-          ))}
-        </div>
+        {gameStatus !== 'START' && (
+          <div className={`absolute inset-x-0 ${arenaBottomClass} ios-safe-arena z-20 pointer-events-none overflow-hidden`}>
+            {particles.map((p) => (
+              <div
+                key={p.id}
+                className="absolute rounded-full"
+                style={{
+                  left: `${(p.x / GRID_SIZE) * 100}%`,
+                  top: `${(p.y / GRID_SIZE) * 100}%`,
+                  width: `${p.size}px`,
+                  height: `${p.size}px`,
+                  backgroundColor: p.color,
+                  opacity: p.alpha,
+                  transform: 'translate(-50%, -50%)',
+                  boxShadow: `0 0 10px ${p.color}, 0 0 4px ${p.color}`,
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         {/* 6. ON-SCREEN ANALOG ARROW D-PAD */}
         {isControllerVisible && (
@@ -1274,57 +1280,66 @@ export default function App() {
                 </p>
               </div>
 
-              {/* Center: The Winding Vector Snake precisely duplicating the user hand representation */}
+              {/* Center: The Winding Block Retro Snake precisely matching the snake in the game */}
               <div className="flex-1 flex items-center justify-center py-6 animate-snake-float">
                 <svg viewBox="0 0 200 240" className="w-48 h-56 md:w-56 md:h-64 drop-shadow-[0_0_20px_rgba(16,185,129,0.35)]" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Glowing background path */}
-                  <path 
-                    d="M 60 70 C 130 50, 150 110, 100 130 C 50 150, 70 210, 140 190" 
-                    stroke="#10b981" 
-                    strokeWidth="20" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                    className="opacity-20 blur-[6px]"
-                  />
-                  {/* Main Snake body */}
-                  <path 
-                    d="M 60 70 C 130 50, 150 110, 100 130 C 50 150, 70 210, 140 190" 
-                    stroke="url(#snakeGradient)" 
-                    strokeWidth="15" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                  
-                  {/* Cute Head at (60, 70) */}
-                  <g transform="translate(60, 70) rotate(-15)">
-                    <ellipse cx="0" cy="0" rx="14" ry="11" fill="#34d399" />
+                  {(() => {
+                    const segments = [
+                      { x: 1, y: 1 }, // Head
+                      { x: 2, y: 1 },
+                      { x: 3, y: 1 },
+                      { x: 4, y: 1 },
+                      { x: 4, y: 2 },
+                      { x: 4, y: 3 },
+                      { x: 3, y: 3 },
+                      { x: 2, y: 3 },
+                      { x: 1, y: 3 },
+                      { x: 1, y: 4 },
+                      { x: 1, y: 5 },
+                      { x: 2, y: 5 },
+                      { x: 3, y: 5 },
+                      { x: 4, y: 5 }, // Tail
+                    ];
+                    const cellWidth = 28;
+                    const step = 32;
                     
-                    {/* Cute glowing eyes */}
-                    <circle cx="-5" cy="-3" r="2.5" fill="#020617" />
-                    <circle cx="-6" cy="-4" r="1" fill="#ffffff" />
-                    <circle cx="5" cy="-3" r="2.5" fill="#020617" />
-                    <circle cx="4" cy="-4" r="1" fill="#ffffff" />
-                    
-                    {/* Little cute smile */}
-                    <path d="M -4 4 Q 0 7, 4 4" stroke="#020617" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-                    
-                    {/* Little tongue peaking out */}
-                    <path d="M 0 5 L 0 10 L -2 12 M 0 10 L 2 12" fill="none" stroke="#f43f5e" strokeWidth="2" strokeLinecap="round" />
-                  </g>
-
-                  {/* Cute Tail rattle at (140, 190) */}
-                  <g transform="translate(140, 190) rotate(15)">
-                    <circle cx="2" cy="0" r="4.5" fill="#10b981" />
-                    <circle cx="7" cy="-1" r="3.5" fill="#047857" />
-                  </g>
-
-                  <defs>
-                    <linearGradient id="snakeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#34d399" />
-                      <stop offset="50%" stopColor="#10b981" />
-                      <stop offset="100%" stopColor="#059669" />
-                    </linearGradient>
-                  </defs>
+                    return segments.map((seg, idx) => {
+                      const isHead = idx === 0;
+                      const px = (seg.x - 1) * step + 38;
+                      const py = (seg.y - 1) * step + 42;
+                      const opacity = Math.max(0.3, 1.0 - (idx / segments.length) * 0.6);
+                      
+                      if (isHead) {
+                        return (
+                          <g key={idx}>
+                            <rect 
+                              x={px - 1} 
+                              y={py - 1} 
+                              width={cellWidth + 2} 
+                              height={cellWidth + 2} 
+                              rx="8" 
+                              fill={activeTheme.primary}
+                            />
+                            <circle cx={px + 8} cy={py + 10} r="2.5" fill={activeTheme.id === 'CLASSIC_NOKIA' ? '#1f2937' : '#020617'} />
+                            <circle cx={px + 20} cy={py + 10} r="2.5" fill={activeTheme.id === 'CLASSIC_NOKIA' ? '#1f2937' : '#020617'} />
+                          </g>
+                        );
+                      }
+                      
+                      return (
+                        <rect 
+                          key={idx}
+                          x={px} 
+                          y={py} 
+                          width={cellWidth} 
+                          height={cellWidth} 
+                          rx="6" 
+                          fill={activeTheme.primary}
+                          opacity={opacity}
+                        />
+                      );
+                    });
+                  })()}
                 </svg>
               </div>
 
